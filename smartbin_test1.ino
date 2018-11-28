@@ -1,18 +1,22 @@
 #define trigpin 9
 #define echopin 8
 #define ledred 7
+#define trigpin2 5
+#define echopin2 6
 
 #include <Servo.h>
 
 Servo servo;
 
-float duration, distance;
+float duration, distance, duration2, distance2;
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   pinMode(trigpin,OUTPUT);
   pinMode (echopin,INPUT);
+  pinMode(trigpin2,OUTPUT);
+  pinMode (echopin2,INPUT);
   pinMode (ledred, OUTPUT);
   servo.attach(10);
   delay(1000);
@@ -20,6 +24,35 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  digitalWrite(trigpin2, LOW);
+  delayMicroseconds(5);
+  digitalWrite(trigpin2, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(trigpin2,LOW);
+  duration2 = pulseIn(echopin2, HIGH);
+  distance2 = (duration2/2)*0.0343;
+
+  if(distance2 >= 30){
+    sampahterbuka();
+  }else{
+    servo.write(90);
+    Serial.println("Sampah penuh");
+    Serial.println(" ");
+    Serial.print(distance2);
+    Serial.println(" cm");
+    digitalWrite(ledred,HIGH);
+//    delay(2000);
+//    digitalWrite(ledred,LOW);
+//    delay(2000);
+//    digitalWrite(ledred,HIGH);
+//    delay(2000);
+//    digitalWrite(ledred,LOW);
+//    delay(2000);
+//    digitalWrite(ledred,HIGH);
+    delay(1000);
+  }
+}
+void sampahterbuka(){
   digitalWrite(trigpin, LOW);
   delayMicroseconds(5);
   digitalWrite(trigpin, HIGH);
@@ -27,17 +60,17 @@ void loop() {
   digitalWrite(trigpin,LOW);
   duration = pulseIn(echopin, HIGH);
   distance = (duration/2)*0.0343;
-
+  
   if (distance <= 30){
     digitalWrite(ledred,HIGH);
     Serial.println("Silakan");
-    servo.write(90);
+    servo.write(0);
   }else{
     digitalWrite(ledred,LOW);
-    servo.write(0);
+    servo.write(90);
     Serial.print(distance);
     Serial.println(" cm");
     delay(1000);
   }
-  delayMicroseconds(10);
+  delayMicroseconds(1);
 }
